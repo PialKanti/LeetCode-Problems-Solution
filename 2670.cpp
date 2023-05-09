@@ -1,27 +1,30 @@
 #include <iostream>
 #include <vector>
-#include <unordered_set>
+#include <unordered_map>
 using namespace std;
-
-int getDistinctCount(vector<int> &nums, int start, int end)
-{
-    unordered_set<int> numSet;
-    for (int i = start; i <= end; i++)
-    {
-        numSet.insert(nums[i]);
-    }
-    return numSet.size();
-}
 
 vector<int> distinctDifferenceArray(vector<int> &nums)
 {
     int n = nums.size();
     vector<int> result(n);
+    unordered_map<int, int> prefixMap;
+    unordered_map<int, int> suffixMap;
+
     for (int i = 0; i < n; i++)
     {
-        int prefixCount = getDistinctCount(nums, 0, i);
-        int suffixCount = getDistinctCount(nums, i + 1, n - 1);
-        result[i] = prefixCount - suffixCount;
+        suffixMap[nums[i]]++;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        prefixMap[nums[i]]++;
+        suffixMap[nums[i]]--;
+        if (suffixMap[nums[i]] == 0)
+        {
+            suffixMap.erase(nums[i]);
+        }
+
+        result[i] = prefixMap.size() - suffixMap.size();
     }
     return result;
 }
